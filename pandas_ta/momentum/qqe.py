@@ -73,7 +73,7 @@ def qqe(
     # Calculate
     rsi_ = rsi(close, length)
     _mode = mamode.lower()[0] if mamode != "ema" else ""
-    rsi_ma = ma(mamode, rsi_, length=smooth)
+    rsi_ma = ma(mamode, rsi_, length=smooth, **kwargs)
 
     # RSI MA True Range
     rsi_ma_tr = rsi_ma.diff(drift).abs()

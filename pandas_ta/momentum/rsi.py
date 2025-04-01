@@ -71,8 +71,8 @@ def rsi(
         positive[positive < 0] = 0  # Make negatives 0 for the positive series
         negative[negative > 0] = 0  # Make positives 0 for the negative series
 
-        positive_avg = ma(mamode, positive, length=length, talib=mode_tal)
-        negative_avg = ma(mamode, negative, length=length, talib=mode_tal)
+        positive_avg = ma(mamode, positive, length=length, talib=mode_tal, **kwargs)
+        negative_avg = ma(mamode, negative, length=length, talib=mode_tal, **kwargs)
 
         rsi = scalar * positive_avg / (positive_avg + negative_avg.abs())
 

@@ -73,8 +73,8 @@ def dm(
         neg_ = neg_.apply(zero)
 
         # Not the same values as TA Lib's -+DM (Good First Issue)
-        pos = ma(mamode, pos_, length=length, talib=mode_tal)
-        neg = ma(mamode, neg_, length=length, talib=mode_tal)
+        pos = ma(mamode, pos_, length=length, talib=mode_tal, **kwargs)
+        neg = ma(mamode, neg_, length=length, talib=mode_tal, **kwargs)
 
     # Offset
     if offset != 0:

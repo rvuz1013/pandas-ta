@@ -75,7 +75,7 @@ def stochf(
         stochf_k = 100 * (close - lowest_low) \
             / non_zero_range(highest_high, lowest_low)
         stochfk_fvi = stochf_k.loc[stochf_k.first_valid_index():, ]
-        stochf_d = ma(mamode, stochfk_fvi, length=d, talib=mode_tal)
+        stochf_d = ma(mamode, stochfk_fvi, length=d, talib=mode_tal, **kwargs)
 
     # Offset
     if offset != 0:

@@ -120,7 +120,7 @@ def atrts(
         return  # Emergency Break
 
     atr_ *= multiplier
-    ma_ = _ma(mamode, close, length=ma_length, talib=mode_tal)
+    ma_ = _ma(mamode, close, length=ma_length, talib=mode_tal, **kwargs)
 
     np_close, np_ma, np_atr = close.to_numpy(), ma_.to_numpy(), atr_.to_numpy()
     np_atrts_, _, _ = nb_atrts(np_close, np_ma, np_atr, length, ma_length)

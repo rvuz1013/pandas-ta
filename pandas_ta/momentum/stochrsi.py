@@ -80,8 +80,8 @@ def stochrsi(
 
     stoch = 100 * (rsi_ - lowest_rsi) / non_zero_range(highest_rsi, lowest_rsi)
 
-    stochrsi_k = ma(mamode, stoch, length=k)
-    stochrsi_d = ma(mamode, stochrsi_k, length=d)
+    stochrsi_k = ma(mamode, stoch, length=k, **kwargs)
+    stochrsi_d = ma(mamode, stochrsi_k, length=d, **kwargs)
 
     # Offset
     if offset != 0:

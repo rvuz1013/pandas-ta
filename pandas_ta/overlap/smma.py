@@ -67,7 +67,7 @@ def smma(
     m = close.size
     smma = close.copy()
     smma[:length - 1] = nan
-    smma.iloc[length - 1] = ma(mamode, close[0:length], length=length, talib=mode_tal).iloc[-1]
+    smma.iloc[length - 1] = ma(mamode, close[0:length], length=length, talib=mode_tal, **kwargs).iloc[-1]
 
     for i in range(length, m):
         smma.iat[i] = ((length - 1) * smma.iat[i - 1] + smma.iat[i]) / length

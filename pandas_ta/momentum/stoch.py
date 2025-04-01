@@ -90,10 +90,10 @@ def stoch(
         if smooth_k == 1:
             stoch_k = stoch
         else:
-            stoch_k = ma(mamode, stoch_fvi, length=smooth_k)
+            stoch_k = ma(mamode, stoch_fvi, length=smooth_k, **kwargs)
 
         stochk_fvi = stoch_k.loc[stoch_k.first_valid_index():, ]
-        stoch_d = ma(mamode, stochk_fvi, length=d)
+        stoch_d = ma(mamode, stochk_fvi, length=d, **kwargs)
 
     stoch_h = stoch_k - stoch_d  # Histogram
 
