@@ -83,4 +83,5 @@ def sma(
     sma.name = f"SMA_{length}"
     sma.category = "overlap"
 
+    print("Returning SMA.............")
     return sma
