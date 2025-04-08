@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pandas import Series
-from pandas_ta import ema
+from ..overlap import ema
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.maps import Imports
 from pandas_ta.utils import (
