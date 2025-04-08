@@ -1,6 +1,7 @@
 import pandas_ta as ta
 import pandas as pd
 import plotly.graph_objects as go
+import yfinance as yf
 
 # Example: Test a moving average function
 dataframe = pd.DataFrame({
@@ -19,9 +20,15 @@ df["date"] = pd.to_datetime(df["date"])
 
 df["sma"] = ta.sma(close = df.close, length = 3)
 
-df["natr"] = ta.natr(high = df.high, low = df.low, close = df.close, length = 10)
+# Testing new RMI indicator function
+df["rmi"] = ta.rmi(close = df.close, momentum = 5)
 
-df["atr"] = ta.atr(high = df.high, low = df.low, close = df.close, percent = True)
+# df["natr"] = ta.natr(high = df.high, low = df.low, close = df.close, length = 10)
+
+# df["atr"] = ta.atr(high = df.high, low = df.low, close = df.close, percent = True)
+
+# x = yf.Ticker('ABB.NS', start = "2021-12-08", end = "2023-01-01", progress = False)
+# ta.stc(x['Close']).iloc[:, 0].mean()
 
 print(df)
 
@@ -33,7 +40,7 @@ figure = go.Figure(data = [go.Candlestick(x = df.date,
                                          close = df.close
                                          )])
 
-# Add RSI indicator overlay to chart
+# Add SMA indicator overlay to chart
 figure.add_trace(go.Scatter(x = df.date,
                             y = df.sma,
                             mode='lines',
