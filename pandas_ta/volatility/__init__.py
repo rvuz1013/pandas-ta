@@ -6,6 +6,7 @@ from .atrts import atrts
 from .bbands import bbands
 from .chandelier_exit import chandelier_exit
 from .donchian import donchian
+from .halftrend import halftrend
 from .hwc import hwc
 from .kc import kc
 from .massi import massi
@@ -24,6 +25,7 @@ __all__ = [
     "bbands",
     "chandelier_exit",
     "donchian",
+    "halftrend",
     "hwc",
     "kc",
     "massi",

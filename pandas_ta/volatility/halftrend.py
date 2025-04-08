@@ -39,7 +39,7 @@ def halftrend(
         return None
 
     # Initialize variables
-    trend = nextTrend = 0
+    trend = next_trend = 0
     up = down = atr_high = atr_low = 0.0
     direction = None
     df_length = high.size
@@ -57,7 +57,7 @@ def halftrend(
     min_high_price = high.iat[atr_length - 1]
 
     if close.iat[0] > low.iat[atr_length]:
-        trend = nextTrend = 1
+        trend = next_trend = 1
 
     # Main calculation loop
     atr_N = atr(high, low, close, window=atr_length)
@@ -73,15 +73,15 @@ def halftrend(
         high_price = highest_bars.iat[i]
         low_price = lowest_bars.iat[i]
 
-        if nextTrend == 1:
+        if next_trend == 1:
             max_low_price = max(low_price, max_low_price)
             if high_ma.iat[i] < max_low_price and close.iat[i] < nz(low.iat[i - 1], low.iat[i]):
-                trend = nextTrend = 0
+                trend = next_trend = 0
                 min_high_price = high_price
         else:
             min_high_price = min(high_price, min_high_price)
             if low_ma.iat[i] > min_high_price and close.iat[i] > nz(high.iat[i - 1], high.iat[i]):
-                trend = nextTrend = 1
+                trend = next_trend = 1
                 max_low_price = low_price
 
         arr_trend[i] = trend
@@ -107,12 +107,12 @@ def halftrend(
     _name = "HALFTREND"
 
     data = {
-        f"{_name}_atrHigh{_props}": atr_high,
+        f"{_name}_atr_high{_props}": atr_high,
         f"{_name}_close{_props}": atr_close,
-        f"{_name}_atrLow{_props}": atr_low,
+        f"{_name}_atr_low{_props}": atr_low,
         f"{_name}_direction{_props}": atr_direction,
-        f"{_name}_arrUp{_props}": arr_up,
-        f"{_name}_arrDown{_props}": arr_down
+        f"{_name}_arr_up{_props}": arr_up,
+        f"{_name}_arr_down{_props}": arr_down
     }
 
     df = DataFrame(data, index=close.index)

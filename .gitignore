@@ -1,3 +1,6 @@
+# test/sandbox files
+test_half_trend.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

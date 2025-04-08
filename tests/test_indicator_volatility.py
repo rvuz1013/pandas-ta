@@ -117,6 +117,11 @@ def test_hwc(df):
     assert isinstance(result, DataFrame)
     assert result.name == "HWC_1"
 
+def test_halftrend(df):
+    result = ta.halftrend(df.high, df.low, df.close)
+    assert isinstance(result, DataFrame)
+    assert result.name == "HALFTREND_14_2_2"
+
 
 def test_kc(df):
     result = ta.kc(df.high, df.low, df.close)
