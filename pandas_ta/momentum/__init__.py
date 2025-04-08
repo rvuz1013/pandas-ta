@@ -25,6 +25,7 @@ from .pgo import pgo
 from .ppo import ppo
 from .psl import psl
 from .qqe import qqe
+from .rmi import rmi
 from .roc import roc
 from .rsi import rsi
 from .rsx import rsx
@@ -72,6 +73,7 @@ __all__ = [
     "ppo",
     "psl",
     "qqe",
+    "rmi",
     "roc",
     "rsi",
     "rsx",
