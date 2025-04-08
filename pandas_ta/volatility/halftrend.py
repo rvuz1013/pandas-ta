@@ -48,10 +48,10 @@ def halftrend(
     arr_up = [None] * df_length
     arr_down = [None] * df_length
 
-    atr_high = pd.Series([0.0] * df_length)
-    atr_low = pd.Series([0.0] * df_length)
-    atr_close = pd.Series([0.0] * df_length)
-    atr_direction = pd.Series([None] * df_length)
+    atr_high_series = pd.Series([0.0] * df_length)
+    atr_low_series = pd.Series([0.0] * df_length)
+    atr_close_series = pd.Series([0.0] * df_length)
+    atr_direction_series = pd.Series([None] * df_length)
 
     max_low_price = low.iat[atr_length - 1]
     min_high_price = high.iat[atr_length - 1]
@@ -97,20 +97,20 @@ def halftrend(
             atr_high, atr_low = down + dev, down - dev
             arr_down[i] = down
 
-        atr_high.iat[i] = atr_high
-        atr_low.iat[i] = atr_low
-        atr_close.iat[i] = up if trend == 0 else down
-        atr_direction.iat[i] = direction
+        atr_high_series.iat[i] = atr_high
+        atr_low_series.iat[i] = atr_low
+        atr_close_series.iat[i] = up if trend == 0 else down
+        atr_direction_series.iat[i] = direction
 
     # Output DataFrame
     _props = f"_{atr_length}_{amplitude}_{channel_deviation}"
     _name = "HALFTREND"
 
     data = {
-        f"{_name}_atr_high{_props}": atr_high,
-        f"{_name}_close{_props}": atr_close,
-        f"{_name}_atr_low{_props}": atr_low,
-        f"{_name}_direction{_props}": atr_direction,
+        f"{_name}_atr_high{_props}": atr_high_series,
+        f"{_name}_close{_props}": atr_close_series,
+        f"{_name}_atr_low{_props}": atr_low_series,
+        f"{_name}_direction{_props}": atr_direction_series,
         f"{_name}_arr_up{_props}": arr_up,
         f"{_name}_arr_down{_props}": arr_down
     }
