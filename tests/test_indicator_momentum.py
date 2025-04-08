@@ -306,7 +306,7 @@ def test_ppo(df):
 
     try:
         expected = tal.PPO(df.close)
-        pdt.assert_series_equal(result.iloc[:,0], expected, check_names=False)
+        pdt.assert_series_equal(result.iloc[:, 0], expected, check_names=False)
     except AssertionError:
         try:
             corr = ta.utils.df_error_analysis(result, expected)
@@ -336,6 +336,12 @@ def test_qqe(df):
     result = ta.qqe(df.volume, asmode=True)
     assert isinstance(result, DataFrame)
     assert result.name == "QQE_14_5_4.236"
+
+
+def test_rmi(df):
+    result = ta.rmi(df.close, talib=False)
+    assert isinstance(result, Series)
+    assert result.name == "RMI_14"
 
 
 def test_roc(df):

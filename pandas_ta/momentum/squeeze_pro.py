@@ -130,7 +130,7 @@ def squeeze_pro(
     kch_narrow.columns = simplify_columns(kch_narrow)
 
     momo = mom(close, length=mom_length)
-    squeeze = ma(mamode, momo, length=mom_smooth, **kwargs)
+    squeeze = ma(mamode, momo, length=mom_smooth)
 
     # Classify Squeezes
     squeeze_on_wide = (bbd.l > kch_wide.l) & (bbd.u < kch_wide.u)

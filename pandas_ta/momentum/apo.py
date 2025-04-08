@@ -57,8 +57,8 @@ def apo(
         from talib import APO
         apo = APO(close, fast, slow, tal_ma(mamode))
     else:
-        fastma = ma(mamode, close, length=fast, talib=mode_tal, **kwargs)
-        slowma = ma(mamode, close, length=slow, talib=mode_tal, **kwargs)
+        fastma = ma(mamode, close, length=fast, talib=mode_tal)
+        slowma = ma(mamode, close, length=slow, talib=mode_tal)
         apo = fastma - slowma
 
     # Offset

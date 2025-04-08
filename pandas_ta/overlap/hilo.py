@@ -66,8 +66,8 @@ def hilo(
     long = Series(nan, index=close.index)
     short = Series(nan, index=close.index)
 
-    high_ma = ma(mamode, high, length=high_length, **kwargs)
-    low_ma = ma(mamode, low, length=low_length, **kwargs)
+    high_ma = ma(mamode, high, length=high_length)
+    low_ma = ma(mamode, low, length=low_length)
 
     for i in range(1, m):
         if close.iat[i] > high_ma.iat[i - 1]:

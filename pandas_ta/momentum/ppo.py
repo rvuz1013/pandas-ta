@@ -67,8 +67,8 @@ def ppo(
         from talib import PPO
         ppo = PPO(close, fast, slow, tal_ma(mamode))
     else:
-        fastma = ma(mamode, close, length=fast, talib=mode_tal, **kwargs)
-        slowma = ma(mamode, close, length=slow, talib=mode_tal, **kwargs)
+        fastma = ma(mamode, close, length=fast, talib=mode_tal)
+        slowma = ma(mamode, close, length=slow, talib=mode_tal)
         ppo = scalar * (fastma - slowma) / slowma
 
     if all(isnan(ppo)):

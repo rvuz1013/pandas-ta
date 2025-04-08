@@ -2,7 +2,7 @@ import pandas_ta as ta
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import yfinance as yf
+# import yfinance as yf
 
 # Example: Test a moving average function
 dataframe = pd.DataFrame({
@@ -23,6 +23,8 @@ df["sma"] = ta.sma(close = df.close, length = 3)
 
 # Testing new RMI indicator function
 df["rmi"] = ta.rmi(close = df.close, momentum = 5)
+
+# df["half_trend"] = ta.half
 
 # df["natr"] = ta.natr(high = df.high, low = df.low, close = df.close, length = 10)
 
@@ -89,4 +91,4 @@ fig.update_layout(
     title="Candlestick with RMI"
 )
 
-fig.show()
+# fig.show()

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+
 sys.dont_write_bytecode = True
 
 from os import system as os_system
@@ -10,10 +11,11 @@ import pandas_ta as ta
 from pandas import read_csv
 
 TEST_ROWS = 200
-TEST_CSV = f"data/SPY_D.csv"
+TEST_CSV = f"C:/Users/rvuz/PycharmProjects/pandas-ta/data/SPY_D.csv"
 
 BEEP = False
 PLAY_BEEP = f"osascript -e beep"
+
 
 @pytest.fixture(name="df", scope="function")
 def testdf():
@@ -53,7 +55,7 @@ def custom_study_a():
         {"kind": "trix"},  # 2
         {"kind": "bbands", "length": 20},  # 5
         {"kind": "log_return", "cumulative": True},  # 1
-        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5, "suffix": "CLR"} # 1
+        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5, "suffix": "CLR"}  # 1
     ]
     return ta.Study(
         name="Commons with Cumulative Log Return EMA Chain",
@@ -96,8 +98,8 @@ def custom_study_d():
     return ta.Study(
         name="Custom Col Numbers Tuple",
         ta=[
-            {"kind": "macd", "col_numbers": (1,)},    # macd histogram
-            {"kind": "bbands", "col_numbers": (0,2)}  # bbands lower and upper
+            {"kind": "macd", "col_numbers": (1,)},  # macd histogram
+            {"kind": "bbands", "col_numbers": (0, 2)}  # bbands lower and upper
         ],
         description="Allow for easy selection of resultant columns"
     )
@@ -108,9 +110,9 @@ def custom_study_e():
     """Returns a Custom Study that has non default indicator parameters and
     an example of indicator composition/chaining: 'ema(CUMLOGRET_1, 5)'"""
     _ta = [
-        {"kind": "amat", "fast": 20, "slow": 50 },  # 2
+        {"kind": "amat", "fast": 20, "slow": 50},  # 2
         {"kind": "log_return", "cumulative": True},  # 1
-        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5} # 1
+        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5}  # 1
     ]
 
     return ta.Study(

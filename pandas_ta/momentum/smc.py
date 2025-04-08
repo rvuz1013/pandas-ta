@@ -77,7 +77,7 @@ def smc(
     # Calculate
     body_high, body_low = maximum(open_, close), minimum(open_, close)
     body = body_high - body_low + sflt.epsilon
-    close_ma = ma(mamode, body, length=close_length, talib=mode_tal, **kwargs)
+    close_ma = ma(mamode, body, length=close_length, talib=mode_tal)
 
     # Calculate imbalance sizes and percentages based on Average Bar Range (abr)
     abr = high.rolling(window=abr_length).max() - low.rolling(window=abr_length).min()
@@ -86,7 +86,7 @@ def smc(
     top_imbalance_pct = 100 * top_imbalance / abr
     btm_imbalance_pct = 100 * btm_imbalance / abr
     hld = high - low + sflt.epsilon
-    high_volatility = hld > vol_ratio * ma(mamode, hld, length=vol_length, talib=mode_tal, **kwargs)
+    high_volatility = hld > vol_ratio * ma(mamode, hld, length=vol_length, talib=mode_tal)
 
     btm_imbalance_flag = (btm_imbalance > 0) & (btm_imbalance_pct > 1)
     top_imbalance_flag = (top_imbalance > 0) & (top_imbalance_pct > 1)
