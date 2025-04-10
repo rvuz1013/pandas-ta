@@ -89,7 +89,7 @@ def test_study_custom_e_talib(df, custom_study_e, talib):
 
 @pytest.mark.parametrize("talib", [False, True])
 def test_study_all_multirun_talib(df, all_study, talib):
-    new_columns = 564  # +/- when adding/removing indicators
+    new_columns = 620  # +/- when adding/removing indicators
     initial_columns = df.shape[1]
     df.ta.study(all_study, length=10, cores=0, talib=talib)
     df.ta.study(all_study, length=50, cores=0, talib=talib)

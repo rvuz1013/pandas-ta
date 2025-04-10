@@ -8,7 +8,8 @@ from pandas_ta.utils import (
     v_scalar,
     v_pos_default,
     v_series,
-    v_talib
+    v_talib,
+    v_int
 )
 
 def rmi(
@@ -22,6 +23,7 @@ def rmi(
     """
     # Validate
     length = v_pos_default(length, 14)
+    momentum = v_int(momentum, 5)
     close = v_series(close, length)
 
     if close is None:
