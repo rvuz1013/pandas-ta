@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import sys
-
 sys.dont_write_bytecode = True
 
 from os import system as os_system
@@ -15,7 +14,6 @@ TEST_CSV = f"data/SPY_D.csv"
 
 BEEP = False
 PLAY_BEEP = f"osascript -e beep"
-
 
 @pytest.fixture(name="df", scope="function")
 def testdf():
@@ -55,7 +53,7 @@ def custom_study_a():
         {"kind": "trix"},  # 2
         {"kind": "bbands", "length": 20},  # 5
         {"kind": "log_return", "cumulative": True},  # 1
-        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5, "suffix": "CLR"}  # 1
+        {"kind": "ema", "close": "CUMLOGRET_1", "length": 5, "suffix": "CLR"} # 1
     ]
     return ta.Study(
         name="Commons with Cumulative Log Return EMA Chain",
