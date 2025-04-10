@@ -11,7 +11,7 @@ import pandas_ta as ta
 from pandas import read_csv
 
 TEST_ROWS = 200
-TEST_CSV = f"C:/Users/rvuz/PycharmProjects/pandas-ta/data/SPY_D.csv"
+TEST_CSV = f"data/SPY_D.csv"
 
 BEEP = False
 PLAY_BEEP = f"osascript -e beep"
