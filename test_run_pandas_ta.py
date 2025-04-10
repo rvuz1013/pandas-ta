@@ -2,7 +2,6 @@ import pandas_ta as ta
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import yfinance as yf
 
 # Example: Test a moving average function
 dataframe = pd.DataFrame({
