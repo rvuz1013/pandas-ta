@@ -3,6 +3,7 @@ import sys
 sys.dont_write_bytecode = True
 
 from os import system as os_system
+from pathlib import Path
 
 import pytest
 import pandas_ta as ta
@@ -10,8 +11,7 @@ import pandas_ta as ta
 from pandas import read_csv
 
 TEST_ROWS = 200
-TEST_CSV = f"data/SPY_D.csv"
-
+TEST_CSV = Path(__file__).parent.parent / "data" / "SPY_D.csv"
 BEEP = False
 PLAY_BEEP = f"osascript -e beep"
 
