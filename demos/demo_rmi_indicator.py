@@ -11,6 +11,8 @@ df["date"] = pd.to_datetime(df["date"])
 # Testing new RMI indicator function
 df["rmi"] = ta.rmi(close = df.close, momentum = 5)
 
+print(df)
+
 fig = make_subplots(
     rows=2, cols=1,
     shared_xaxes=True,
