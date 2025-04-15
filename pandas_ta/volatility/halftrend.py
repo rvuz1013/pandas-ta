@@ -45,12 +45,12 @@ def halftrend(
     df_length = high.size
 
     arr_trend = [None] * df_length
-    arr_up = [None] * df_length
-    arr_down = [None] * df_length
+    arr_up = pd.Series([None] * df_length)
+    arr_down = pd.Series([None] * df_length)
 
-    atr_high_series = pd.Series([0.0] * df_length)
-    atr_low_series = pd.Series([0.0] * df_length)
-    atr_close_series = pd.Series([0.0] * df_length)
+    atr_high_series = pd.Series([nan] * df_length)
+    atr_low_series = pd.Series([nan] * df_length)
+    atr_close_series = pd.Series([nan] * df_length)
     atr_direction_series = pd.Series([None] * df_length)
 
     max_low_price = low.iat[atr_length - 1]
@@ -104,17 +104,18 @@ def halftrend(
 
     # Output DataFrame
     _props = f"_{atr_length}_{amplitude}_{channel_deviation}"
-    _name = "HALFTREND"
+    _name = "HT"
 
-    data = {
-        f"{_name}_atr_high{_props}": atr_high_series,
-        f"{_name}_close{_props}": atr_close_series,
-        f"{_name}_atr_low{_props}": atr_low_series,
-        f"{_name}_direction{_props}": atr_direction_series,
-        f"{_name}_arr_up{_props}": arr_up,
-        f"{_name}_arr_down{_props}": arr_down
-    }
+    atr_high_series.name = f"{_name}_atr_high{_props}"
+    atr_close_series.name = f"{_name}_close{_props}"
+    atr_low_series.name = f"{_name}_atr_low{_props}"
+    atr_direction_series.name = f"{_name}_direction{_props}"
+    arr_up.name = f"{_name}_arr_up{_props}"
+    arr_down.name = f"{_name}_arr_down{_props}"
 
+    data = {atr_high_series.name: atr_high_series, atr_low_series.name: atr_low_series,
+            atr_close_series.name: atr_close_series, atr_direction_series.name: atr_direction_series,
+            arr_up.name: arr_up, arr_down.name: arr_down, }
     df = DataFrame(data, index=close.index)
     df.name = f"{_name}{_props}"
     df.category = "volatility"

@@ -23,16 +23,27 @@ df["sma"] = ta.sma(close = df.close, length = 3)
 # Testing new RMI indicator function
 df["rmi"] = ta.rmi(close = df.close, momentum = 5)
 
-# df["half_trend"] = ta.half
+# Show all columns
+pd.set_option("display.max_columns", None)
 
-# df["natr"] = ta.natr(high = df.high, low = df.low, close = df.close, length = 10)
+# Show all rows
+pd.set_option("display.max_rows", None)
 
-# df["atr"] = ta.atr(high = df.high, low = df.low, close = df.close, percent = True)
+# Show full content in each column (e.g., if a string is long)
+pd.set_option("display.max_colwidth", None)
+
+# Optional: prevent line wrapping in console
+pd.set_option("display.expand_frame_repr", False)
+
+htdf = ta.halftrend(high = df.high, low = df.low, close = df.close)
+# df = df.join(ta.halftrend(high = df.high, low = df.low, close = df.close))
 
 # x = yf.Ticker('ABB.NS', start = "2021-12-08", end = "2023-01-01", progress = False)
 # ta.stc(x['Close']).iloc[:, 0].mean()
 
-print(df)
+print(htdf)
+
+# Bellow is all the messy plotly graphing functions
 
 # Graph the dataframe as a candlestick price chart
 figure = go.Figure(data = [go.Candlestick(x = df.date,
@@ -52,42 +63,91 @@ figure.add_trace(go.Scatter(x = df.date,
 
 # figure.show()
 
-fig = make_subplots(
-    rows=2, cols=1,
-    shared_xaxes=True,
-    vertical_spacing=0.03,
-    row_heights=[0.7, 0.3],
-    subplot_titles=("Candlestick Chart", "RMI")
-)
+# fig = make_subplots(
+#     rows=2, cols=1,
+#     shared_xaxes=True,
+#     vertical_spacing=0.03,
+#     row_heights=[0.7, 0.3],
+#     subplot_titles=("Candlestick Chart", "RMI")
+# )
+#
+# # Candlestick chart
+# fig.add_trace(go.Candlestick(
+#     x=df.index,
+#     open=df["open"],
+#     high=df["high"],
+#     low=df["low"],
+#     close=df["close"],
+#     name="Price"
+# ), row=1, col=1)
+#
+# # RSI plot
+# fig.add_trace(go.Scatter(
+#     x=df.index,
+#     y=df["rmi"],
+#     line=dict(color="purple", width=1),
+#     name="RMI"
+# ), row=2, col=1)
+#
+# # Add overbought/oversold lines
+# fig.add_hline(y=70, line=dict(color="red", dash="dash"), row=2, col=1)
+# fig.add_hline(y=30, line=dict(color="green", dash="dash"), row=2, col=1)
+#
+# # Update layout
+# fig.update_layout(
+#     height=800,
+#     showlegend=False,
+#     xaxis_rangeslider_visible=False,
+#     title="Candlestick with RMI"
+# )
 
-# Candlestick chart
+fig = go.Figure()
+
+# Add candlestick chart
 fig.add_trace(go.Candlestick(
     x=df.index,
-    open=df["open"],
-    high=df["high"],
-    low=df["low"],
-    close=df["close"],
-    name="Price"
-), row=1, col=1)
+    open=df['open'],
+    high=df['high'],
+    low=df['low'],
+    close=df['close'],
+    name='Candles'
+))
 
-# RSI plot
+# Add HalfTrend middle line (close values)
 fig.add_trace(go.Scatter(
-    x=df.index,
-    y=df["rmi"],
-    line=dict(color="purple", width=1),
-    name="RMI"
-), row=2, col=1)
+    x=htdf.index,
+    y=htdf['HALFTREND_close_14_2_2'],
+    mode='lines',
+    name='HalfTrend',
+    line=dict(color='blue', width=2)
+))
 
-# Add overbought/oversold lines
-fig.add_hline(y=70, line=dict(color="red", dash="dash"), row=2, col=1)
-fig.add_hline(y=30, line=dict(color="green", dash="dash"), row=2, col=1)
+# Add atr_high (upper band)
+fig.add_trace(go.Scatter(
+    x=htdf.index,
+    y=htdf['HALFTREND_atr_high_14_2_2'],
+    mode='lines',
+    name='ATR High',
+    line=dict(color='green', width=1, dash='dot')
+))
 
-# Update layout
+# Add atr_low (lower band)
+fig.add_trace(go.Scatter(
+    x=htdf.index,
+    y=htdf['HALFTREND_atr_low_14_2_2'],
+    mode='lines',
+    name='ATR Low',
+    line=dict(color='red', width=1, dash='dot')
+))
+
+# Customize layout
 fig.update_layout(
-    height=800,
-    showlegend=False,
-    xaxis_rangeslider_visible=False,
-    title="Candlestick with RMI"
+    title='HalfTrend Indicator Overlay',
+    xaxis_title='Index',
+    yaxis_title='Price',
+    xaxis=dict(rangeslider=dict(visible=False)),  # Hide rangeslider if not needed
+    yaxis=dict(autorange=True),  # <- THIS enables y-axis autoscaling on zoom
+    height=700,
 )
 
-# fig.show()
+fig.show()
