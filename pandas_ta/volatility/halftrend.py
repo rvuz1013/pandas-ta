@@ -59,20 +59,20 @@ def halftrend(
     if close.iat[0] > low.iat[atr_length]:
         trend = next_trend = 1
 
-    # Main calculation loop
-    atr_N = atr(high, low, close, window=atr_length)
-    high_ma = sma(high, amplitude)
-    low_ma = sma(low, amplitude)
-    highest_bars = high.rolling(amplitude, min_periods=1).max()
-    lowest_bars = low.rolling(amplitude, min_periods=1).min()
+    df_length = high.size
 
     for i in range(1, df_length):
+        # Main calculation loop
+        atr_N = atr(high, low, close, window=atr_length)
+        high_ma = sma(high, amplitude)
+        low_ma = sma(low, amplitude)
+        highest_bars = high.rolling(amplitude, min_periods=1).max()
+        lowest_bars = low.rolling(amplitude, min_periods=1).min()
+
         atr2 = atr_N.iat[i] / 2.0
         dev = channel_deviation * atr2
-
         high_price = highest_bars.iat[i]
         low_price = lowest_bars.iat[i]
-
         if next_trend == 1:
             max_low_price = max(low_price, max_low_price)
             if high_ma.iat[i] < max_low_price and close.iat[i] < nz(low.iat[i - 1], low.iat[i]):
