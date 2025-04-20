@@ -1,5 +1,6 @@
 import pandas as pd
-from numpy import isnan, nan
+import numpy as np
+from numba import njit
 from pandas import Series, DataFrame
 from pandas_ta.volatility import atr
 from pandas_ta.overlap import sma
@@ -16,108 +17,134 @@ def na(value):
     """Check if a value is NaN."""
     return pd.isnull(value)
 
-
-def halftrend(
-    high: Series, low: Series, close: Series,
-    atr_length: Int = None,
-    amplitude: Int = None,
-    channel_deviation: Int = None,
-    **kwargs: DictLike
-) -> DataFrame:
-
-    # Validate inputs
-    atr_length = v_pos_default(atr_length, 14)
-    amplitude = v_pos_default(amplitude, 2)
-    channel_deviation = v_pos_default(channel_deviation, 2)
-    _length = max(atr_length, amplitude, channel_deviation) + 1
-
-    high = v_series(high, _length)
-    low = v_series(low, _length)
-    close = v_series(close, _length)
-
-    if high is None or low is None or close is None:
-        return None
-
-    # Initialize variables
+@njit
+def halftrend_loop(
+    high: np.ndarray, low: np.ndarray, close: np.ndarray,
+    atr_arr: np.ndarray, high_ma: np.ndarray, low_ma: np.ndarray,
+    highest_bars: np.ndarray, lowest_bars: np.ndarray,
+    atr_length: int, amplitude: int, channel_deviation: int
+):
+    length = len(close)
     trend = next_trend = 0
-    up = down = atr_high = atr_low = 0.0
-    direction = None
-    df_length = high.size
+    alpha = 0.2  # Smoothing factor
 
-    arr_trend = [None] * df_length
-    arr_up = pd.Series([None] * df_length)
-    arr_down = pd.Series([None] * df_length)
+    # Initialize up/down to a real price value to avoid long ramp-up
+    up = low[atr_length]
+    down = high[atr_length]
+    atr_high = up
+    atr_low = down
 
-    atr_high_series = pd.Series([nan] * df_length)
-    atr_low_series = pd.Series([nan] * df_length)
-    atr_close_series = pd.Series([nan] * df_length)
-    atr_direction_series = pd.Series([None] * df_length)
+    max_low_price = low[atr_length]
+    min_high_price = high[atr_length]
 
-    max_low_price = low.iat[atr_length - 1]
-    min_high_price = high.iat[atr_length - 1]
-
-    if close.iat[0] > low.iat[atr_length]:
+    if close[atr_length] > low[atr_length]:
         trend = next_trend = 1
 
-    df_length = high.size
+    # Optional: clamp ATR to avoid jumps
+    atr_cap = np.nanmax(atr_arr[:atr_length * 2]) * 0.5
 
-    for i in range(1, df_length):
-        # Main calculation loop
-        atr_N = atr(high, low, close, window=atr_length)
-        high_ma = sma(high, amplitude)
-        low_ma = sma(low, amplitude)
-        highest_bars = high.rolling(amplitude, min_periods=1).max()
-        lowest_bars = low.rolling(amplitude, min_periods=1).min()
+    arr_trend = np.zeros(length, dtype=np.int32)
+    arr_up = np.full(length, np.nan)
+    arr_down = np.full(length, np.nan)
+    atr_high_series = np.full(length, np.nan)
+    atr_low_series = np.full(length, np.nan)
+    atr_close_series = np.full(length, np.nan)
+    atr_direction_series = np.zeros(length, dtype=np.int32)
 
-        atr2 = atr_N.iat[i] / 2.0
+    for i in range(atr_length + 1, length):
+        atr_raw = atr_arr[i]
+        atr2 = atr_raw / 2.0
+        atr2 = min(atr2, atr_cap)  # Clamp ATR
         dev = channel_deviation * atr2
-        high_price = highest_bars.iat[i]
-        low_price = lowest_bars.iat[i]
+
+        high_price = highest_bars[i]
+        low_price = lowest_bars[i]
+
+        # More tolerant trend switching
         if next_trend == 1:
             max_low_price = max(low_price, max_low_price)
-            if high_ma.iat[i] < max_low_price and close.iat[i] < nz(low.iat[i - 1], low.iat[i]):
+            if high_ma[i] < (max_low_price - dev) and close[i] < low[i - 1]:
                 trend = next_trend = 0
                 min_high_price = high_price
         else:
             min_high_price = min(high_price, min_high_price)
-            if low_ma.iat[i] > min_high_price and close.iat[i] > nz(high.iat[i - 1], high.iat[i]):
+            if low_ma[i] > (min_high_price + dev) and close[i] > high[i - 1]:
                 trend = next_trend = 1
                 max_low_price = low_price
 
         arr_trend[i] = trend
 
         if trend == 0:
-            up = max(max_low_price, nz(arr_up[i - 1], max_low_price))
-            direction = "long"
-            atr_high, atr_low = up + dev, up - dev
+            # Smooth 'up' with a warm start
+            if np.isnan(up):
+                up = max_low_price
+            else:
+                up = alpha * max_low_price + (1 - alpha) * up
+
+            atr_high = up + dev
+            atr_low = up - dev
+
             arr_up[i] = up
+            atr_close_series[i] = up
+            atr_direction_series[i] = 0  # long
+
         else:
-            down = min(min_high_price, nz(arr_down[i - 1], min_high_price))
-            direction = "short"
-            atr_high, atr_low = down + dev, down - dev
+            if np.isnan(down):
+                down = min_high_price
+            else:
+                down = alpha * min_high_price + (1 - alpha) * down
+
+            atr_high = down + dev
+            atr_low = down - dev
+
             arr_down[i] = down
+            atr_close_series[i] = down
+            atr_direction_series[i] = 1  # short
 
-        atr_high_series.iat[i] = atr_high
-        atr_low_series.iat[i] = atr_low
-        atr_close_series.iat[i] = up if trend == 0 else down
-        atr_direction_series.iat[i] = direction
+        atr_high_series[i] = atr_high
+        atr_low_series[i] = atr_low
 
-    # Output DataFrame
-    _props = f"_{atr_length}_{amplitude}_{channel_deviation}"
-    _name = "HT"
+    return (
+        atr_high_series,
+        atr_low_series,
+        atr_close_series,
+        atr_direction_series,
+        arr_up,
+        arr_down
+    )
 
-    atr_high_series.name = f"{_name}_atr_high{_props}"
-    atr_close_series.name = f"{_name}_close{_props}"
-    atr_low_series.name = f"{_name}_atr_low{_props}"
-    atr_direction_series.name = f"{_name}_direction{_props}"
-    arr_up.name = f"{_name}_arr_up{_props}"
-    arr_down.name = f"{_name}_arr_down{_props}"
+def halftrend(high, low, close, atr_length=14, amplitude=2, channel_deviation=2):
+    high = high.values
+    low = low.values
+    close = close.values
 
-    data = {atr_high_series.name: atr_high_series, atr_low_series.name: atr_low_series,
-            atr_close_series.name: atr_close_series, atr_direction_series.name: atr_direction_series,
-            arr_up.name: arr_up, arr_down.name: arr_down, }
-    df = DataFrame(data, index=close.index)
-    df.name = f"{_name}{_props}"
-    df.category = "volatility"
+    # atr_raw = atr(pd.Series(high), pd.Series(low), pd.Series(close), window=atr_length)
+    # atr_arr = atr_raw.rolling(3).mean().fillna(method="bfill").values
+
+    atr_arr = atr(pd.Series(high), pd.Series(low), pd.Series(close), window=atr_length).values
+    high_ma = sma(pd.Series(high), amplitude).values
+    low_ma = sma(pd.Series(low), amplitude).values
+    highest_bars = pd.Series(high).rolling(amplitude, min_periods=1).max().values
+    lowest_bars = pd.Series(low).rolling(amplitude, min_periods=1).min().values
+
+    results = halftrend_loop(
+        high, low, close, atr_arr, high_ma, low_ma,
+        highest_bars, lowest_bars,
+        atr_length, amplitude, channel_deviation
+    )
+
+    (
+        atr_high_series, atr_low_series, atr_close_series,
+        atr_direction_series, arr_up, arr_down
+    ) = results
+
+    df = pd.DataFrame({
+        f"HT_atr_high_{atr_length}_{amplitude}_{channel_deviation}": atr_high_series,
+        f"HT_atr_low_{atr_length}_{amplitude}_{channel_deviation}": atr_low_series,
+        f"HT_close_{atr_length}_{amplitude}_{channel_deviation}": atr_close_series,
+        f"HT_direction_{atr_length}_{amplitude}_{channel_deviation}": np.where(atr_direction_series == 0, "long", "short"),
+        f"HT_arr_up_{atr_length}_{amplitude}_{channel_deviation}": arr_up,
+        f"HT_arr_down_{atr_length}_{amplitude}_{channel_deviation}": arr_down
+    })
 
     return df
