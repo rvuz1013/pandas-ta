@@ -22,7 +22,7 @@ def trama(
 ) -> Series:
 
     # Validate
-    length = v_pos_default(length, 99)
+    length = v_pos_default(length, 10)
     close = v_series(close, length)
 
     if close is None:

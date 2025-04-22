@@ -253,6 +253,12 @@ def test_rwi(df):
     assert result.name == "RWI_14"
 
 
+def test_trama(df):
+    result = ta.trama(df.close)
+    assert isinstance(result, Series)
+    assert result.name == "TRAMA_10"
+
+
 def test_short_run(df):
     result = ta.short_run(df.close, df.open)
     assert isinstance(result, Series)
