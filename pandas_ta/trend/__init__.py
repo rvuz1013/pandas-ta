@@ -15,6 +15,7 @@ from .psar import psar
 from .qstick import qstick
 from .rwi import rwi
 from .short_run import short_run
+from .trama import trama
 from .trendflex import trendflex
 from .tsignals import tsignals
 from .vhf import vhf
@@ -39,6 +40,7 @@ __all__ = [
     "qstick",
     "rwi",
     "short_run",
+    "trama",
     "trendflex",
     "tsignals",
     "vhf",
