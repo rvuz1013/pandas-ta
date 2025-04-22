@@ -20,6 +20,16 @@ def test_accbands(df):
     assert isinstance(result, DataFrame)
     assert result.name == "ACCBANDS_20"
 
+def test_avsl(df):
+    result = ta.avsl(
+        df.high, df.low, df.close, df.volume,
+        # use defaults; you can override here if you like
+    )
+    assert isinstance(result, Series)
+    assert result.name == "AVSL_50_10_10_50"
+    # basic sanity: should be same length as df, and not all NaN
+    assert len(result) == len(df)
+    assert result.notna().any()
 
 def test_atr(df):
     result = ta.atr(df.high, df.low, df.close, talib=False, prenan=True)
@@ -228,6 +238,9 @@ def test_ext_accbands(df):
     df.ta.accbands(append=True)
     assert list(df.columns[-3:]) == ["ACCBL_20", "ACCBM_20", "ACCBU_20"]
 
+def test_ext_avsl(df):
+    df.ta.avsl(append=True)
+    assert df.columns[-1] == "AVSL_50_10_10_50"
 
 def test_ext_atr(df):
     df.ta.atr(append=True)
