@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from .aberration import aberration
 from .accbands import accbands
+from .avsl import avsl
 from .atr import atr
 from .atrts import atrts
 from .bbands import bbands
@@ -20,6 +21,7 @@ from .ui import ui
 __all__ = [
     "aberration",
     "accbands",
+    "avsl",
     "atr",
     "atrts",
     "bbands",
