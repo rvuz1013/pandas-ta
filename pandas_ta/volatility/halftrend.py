@@ -8,15 +8,6 @@ from pandas_ta._typing import Int, DictLike
 from pandas_ta.utils import v_pos_default, v_series
 
 
-def nz(value, default):
-    """Return default if value is NaN, otherwise return value."""
-    return default if pd.isnull(value) else value
-
-
-def na(value):
-    """Check if a value is NaN."""
-    return pd.isnull(value)
-
 @njit
 def halftrend_loop(
     high: np.ndarray, low: np.ndarray, close: np.ndarray,
@@ -26,7 +17,7 @@ def halftrend_loop(
 ):
     length = len(close)
     trend = next_trend = 0
-    alpha = 0.2  # Smoothing factor
+    alpha = 0.3  # Smoothing factor
 
     # Initialize up/down to a real price value to avoid long ramp-up
     up = low[atr_length]
@@ -40,7 +31,6 @@ def halftrend_loop(
     if close[atr_length] > low[atr_length]:
         trend = next_trend = 1
 
-    # Optional: clamp ATR to avoid jumps
     atr_cap = np.nanmax(atr_arr[:atr_length * 2]) * 0.5
 
     arr_trend = np.zeros(length, dtype=np.int32)
@@ -113,19 +103,16 @@ def halftrend_loop(
         arr_down
     )
 
-def halftrend(high, low, close, atr_length=14, amplitude=2, channel_deviation=2):
-    high = high.values
-    low = low.values
-    close = close.values
+def halftrend(high: Series, low: Series, close: Series, atr_length: Int=14, amplitude: Int=2, channel_deviation: Int=2):
+    high = high.to_numpy()
+    low = low.to_numpy()
+    close = close.to_numpy()
 
-    # atr_raw = atr(pd.Series(high), pd.Series(low), pd.Series(close), window=atr_length)
-    # atr_arr = atr_raw.rolling(3).mean().fillna(method="bfill").values
-
-    atr_arr = atr(pd.Series(high), pd.Series(low), pd.Series(close), window=atr_length).values
-    high_ma = sma(pd.Series(high), amplitude).values
-    low_ma = sma(pd.Series(low), amplitude).values
-    highest_bars = pd.Series(high).rolling(amplitude, min_periods=1).max().values
-    lowest_bars = pd.Series(low).rolling(amplitude, min_periods=1).min().values
+    atr_arr = atr(pd.Series(high), pd.Series(low), pd.Series(close), window=atr_length).to_numpy()
+    high_ma = sma(pd.Series(high), amplitude).to_numpy()
+    low_ma = sma(pd.Series(low), amplitude).to_numpy()
+    highest_bars = pd.Series(high).rolling(amplitude, min_periods=1).max().to_numpy()
+    lowest_bars = pd.Series(low).rolling(amplitude, min_periods=1).min().to_numpy()
 
     results = halftrend_loop(
         high, low, close, atr_arr, high_ma, low_ma,
@@ -138,7 +125,7 @@ def halftrend(high, low, close, atr_length=14, amplitude=2, channel_deviation=2)
         atr_direction_series, arr_up, arr_down
     ) = results
 
-    df = pd.DataFrame({
+    df = DataFrame({
         f"HT_atr_high_{atr_length}_{amplitude}_{channel_deviation}": atr_high_series,
         f"HT_atr_low_{atr_length}_{amplitude}_{channel_deviation}": atr_low_series,
         f"HT_close_{atr_length}_{amplitude}_{channel_deviation}": atr_close_series,
@@ -146,5 +133,8 @@ def halftrend(high, low, close, atr_length=14, amplitude=2, channel_deviation=2)
         f"HT_arr_up_{atr_length}_{amplitude}_{channel_deviation}": arr_up,
         f"HT_arr_down_{atr_length}_{amplitude}_{channel_deviation}": arr_down
     })
+
+    _props = f"_{atr_length}_{amplitude}_{channel_deviation}"
+    df.name = f"HT{_props}"
 
     return df
