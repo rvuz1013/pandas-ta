@@ -1,31 +1,47 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-import numpy as np
+import plotly.graph_objects as go
 import pandas_ta as ta
 
-# 1) Generate sample data (20 rows)
-np.random.seed(42)
-dates = pd.date_range("2021-01-01", periods=20, freq="D")
-close = np.cumsum(np.random.randn(len(dates))) + 100
-high = close + np.random.rand(len(dates)) * 2
-low = close - np.random.rand(len(dates)) * 2
-volume = np.random.randint(100, 1000, size=len(dates))
+df = pd.read_csv("../data/SPY_D.csv")
+df.sort_values(by=['date'], inplace=True)
 
-df = pd.DataFrame({
-    "High": high,
-    "Low": low,
-    "Close": close,
-    "Volume": volume
-}, index=dates)
+df["date"] = pd.to_datetime(df["date"])
 
 # 2) Compute AVSL
 # Note: adjust lengths if your df is small, e.g. vpc_length=10, vm_long=10
 df["avsl"] = ta.avsl(
-    df["High"], df["Low"], df["Close"], df["Volume"],
-    vpc_length=10, vpr_length=5,
-    vm_short=5, vm_long=10,
-    scalar=2.0
+    low = df["low"], close = df["close"], volume = df["volume"],
 )
 
 # 3) Print the AVSL column
-print(df["avsl"])
+print(df)
+
+
+# Graph the dataframe as a candlestick price chart
+figure = go.Figure(data = [go.Candlestick(x = df.date,
+                                         open = df.open,
+                                         high = df.high,
+                                         low = df.low,
+                                         close = df.close
+                                         )])
+
+# Add AVSL indicator overlay to chart
+figure.add_trace(go.Scatter(x = df.date,
+                            y = df.avsl,
+                            mode='lines',
+                            line=dict(color='red'),
+                            name='AVSL'
+                            ))
+
+# Customize layout
+figure.update_layout(
+    title='AVSL Indicator Overlay',
+    xaxis_title='Index',
+    yaxis_title='Price',
+    xaxis=dict(rangeslider=dict(visible=False)),  # Hide rangeslider if not needed
+    yaxis=dict(autorange=True),  # <- THIS enables y-axis autoscaling on zoom
+    height=500,
+)
+
+figure.show()
