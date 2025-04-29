@@ -2,7 +2,7 @@
 from pandas import DataFrame, Series
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.utils import v_drift, v_offset, v_pos_default, v_series
-from pandas_ta.volatility import true_range
+from pandas_ta.volatility.true_range import true_range
 
 
 

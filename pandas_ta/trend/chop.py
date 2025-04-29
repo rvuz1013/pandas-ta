@@ -10,7 +10,7 @@ from pandas_ta.utils import (
     v_scalar,
     v_series
 )
-from pandas_ta.volatility import atr
+from pandas_ta.volatility.atr import atr
 
 
 

@@ -1638,6 +1638,14 @@ class AnalysisIndicators(object):
         result = atrts(high=high, low=low, close=close, length=length, ma_length=ma_length, multiplier=multiplier, mamode=mamode, talib=talib, drift=drift, offset=offset, **kwargs)
         return self._post_process(result, **kwargs)
 
+    def avsl(self, fast_period=None, slow_period=None, scalar=None, offset=None, **kwargs: DictLike):
+        volume = self._get_column(kwargs.pop("volume", "volume"))
+        low = self._get_column(kwargs.pop("low", "low"))
+        close = self._get_column(kwargs.pop("close", "close"))
+        result = avsl(volume=volume, low=low, close=close, fast_period=fast_period, slow_period=slow_period, scalar=scalar, offset=offset,
+                            **kwargs)
+        return self._post_process(result, **kwargs)
+
     def bbands(self, length=None, std=None, mamode=None, offset=None, **kwargs: DictLike):
         close  = self._get_column(kwargs.pop("close", "close"))
         result = bbands(close=close, length=length, std=std, mamode=mamode, offset=offset, **kwargs)

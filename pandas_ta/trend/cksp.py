@@ -9,7 +9,7 @@ from pandas_ta.utils import (
     v_series,
     v_tradingview
 )
-from pandas_ta.volatility import atr
+from pandas_ta.volatility.atr import atr
 
 
 

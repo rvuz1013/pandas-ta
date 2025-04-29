@@ -51,6 +51,11 @@ def test_atrts(df):
     assert isinstance(result, Series)
     assert result.name == "ATRTSe_14_20_3.0"
 
+def test_avsl(df):
+    result = ta.avsl(df.low, df.close, df.volume)
+    assert isinstance(result, Series)
+    assert result.name == "AVSL_12_26_9"
+
 
 def test_bbands(df):
     result = ta.bbands(df.close, talib=False)
@@ -234,7 +239,7 @@ def test_ext_accbands(df):
 
 def test_ext_avsl(df):
     df.ta.avsl(append=True)
-    assert df.columns[-1] == "AVSL_50_10_10_50"
+    assert df.columns[-1] == "AVSL_12_26_9"
 
 def test_ext_atr(df):
     df.ta.atr(append=True)

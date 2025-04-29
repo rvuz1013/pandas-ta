@@ -12,7 +12,7 @@ from pandas_ta.utils import (
     v_scalar,
     v_series
 )
-from pandas_ta.volatility import rvi
+from pandas_ta.volatility.rvi import rvi
 
 
 

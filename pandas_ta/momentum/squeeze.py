@@ -13,7 +13,8 @@ from pandas_ta.utils import (
     v_pos_default,
     v_series
 )
-from pandas_ta.volatility import bbands, kc
+from pandas_ta.volatility.kc import kc
+from pandas_ta.volatility.bbands import bbands
 from .mom import mom
 
 

@@ -2,7 +2,7 @@
 from numpy import isnan
 from pandas import DataFrame, Series
 from pandas_ta._typing import DictLike, Int
-from pandas_ta.overlap import swma
+from pandas_ta.overlap.swma import swma
 from pandas_ta.utils import non_zero_range, v_offset, v_pos_default, v_series
 
 

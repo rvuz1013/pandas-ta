@@ -2,7 +2,7 @@
 from numpy import isnan
 from pandas import DataFrame, Series
 from pandas_ta._typing import DictLike, Int
-from pandas_ta.volatility import atr
+from pandas_ta.volatility.atr import atr
 from pandas_ta.utils import (
     v_drift,
     v_mamode,

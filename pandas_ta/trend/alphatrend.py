@@ -4,7 +4,7 @@ from numba import njit
 from pandas import DataFrame, Series
 from pandas_ta._typing import Array, DictLike, Int, IntFloat
 from pandas_ta.momentum import rsi
-from pandas_ta.volatility import atr
+from pandas_ta.volatility.atr import atr
 from pandas_ta.volume.mfi import mfi
 from pandas_ta.utils import (
     v_mamode,
