@@ -31,7 +31,17 @@ figure.add_trace(go.Scatter(x = df.date,
                             y = df.avsl,
                             mode='lines',
                             line=dict(color='red'),
-                            name='TRAMA'
+                            name='AVSL'
                             ))
+
+# Customize layout
+figure.update_layout(
+    title='AVSL Indicator Overlay',
+    xaxis_title='Index',
+    yaxis_title='Price',
+    xaxis=dict(rangeslider=dict(visible=False)),  # Hide rangeslider if not needed
+    yaxis=dict(autorange=True),  # <- THIS enables y-axis autoscaling on zoom
+    height=500,
+)
 
 figure.show()

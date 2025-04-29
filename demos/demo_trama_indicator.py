@@ -18,7 +18,7 @@ figure = go.Figure(data = [go.Candlestick(x = df.date,
                                          close = df.close
                                          )])
 
-# Add SMA indicator overlay to chart
+# Add TRAMA indicator overlay to chart
 figure.add_trace(go.Scatter(x = df.date,
                             y = df.TRAMA,
                             mode='lines',
