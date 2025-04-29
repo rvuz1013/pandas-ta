@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-import numpy as np
+import plotly.graph_objects as go
 import pandas_ta as ta
 
-df = pd.read_csv("../data/sample.csv")
+df = pd.read_csv("../data/SPY_D.csv")
 df.sort_values(by=['date'], inplace=True)
 
 df["date"] = pd.to_datetime(df["date"])
@@ -16,3 +16,22 @@ df["avsl"] = ta.avsl(
 
 # 3) Print the AVSL column
 print(df)
+
+
+# Graph the dataframe as a candlestick price chart
+figure = go.Figure(data = [go.Candlestick(x = df.date,
+                                         open = df.open,
+                                         high = df.high,
+                                         low = df.low,
+                                         close = df.close
+                                         )])
+
+# Add AVSL indicator overlay to chart
+figure.add_trace(go.Scatter(x = df.date,
+                            y = df.avsl,
+                            mode='lines',
+                            line=dict(color='red'),
+                            name='TRAMA'
+                            ))
+
+figure.show()
