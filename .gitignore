@@ -1,5 +1,6 @@
 # test/sandbox files
-test_half_trend.py
+half_trend_demo.py
+natr_demo.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -12,7 +12,16 @@ pd.set_option("display.max_rows", None)
 pd.set_option("display.max_colwidth", None)
 pd.set_option("display.expand_frame_repr", False)
 
-htdf = ta.halftrend(high = df.high, low = df.low, close = df.close)
+atr_length = 12
+amplitude = 3
+channel_deviation = 2
+
+htdf = ta.halftrend(high=df.high,
+                    low=df.low,
+                    close=df.close,
+                    atr_length=atr_length,
+                    amplitude=amplitude,
+                    channel_deviation=channel_deviation)
 
 print(htdf)
 
@@ -31,7 +40,7 @@ fig.add_trace(go.Candlestick(
 # Add HalfTrend middle line (close values)
 fig.add_trace(go.Scatter(
     x=htdf.index,
-    y=htdf['HT_close_14_2_2'],
+    y=htdf[f'HT_close_{atr_length}_{amplitude}_{channel_deviation}'],
     mode='lines',
     name='HalfTrend',
     line=dict(color='blue', width=2)
@@ -40,7 +49,7 @@ fig.add_trace(go.Scatter(
 # Add atr_high (upper band)
 fig.add_trace(go.Scatter(
     x=htdf.index,
-    y=htdf['HT_atr_high_14_2_2'],
+    y=htdf[f'HT_atr_high_{atr_length}_{amplitude}_{channel_deviation}'],
     mode='lines',
     name='ATR High',
     line=dict(color='green', width=1, dash='dot')
@@ -49,7 +58,7 @@ fig.add_trace(go.Scatter(
 # Add atr_low (lower band)
 fig.add_trace(go.Scatter(
     x=htdf.index,
-    y=htdf['HT_atr_low_14_2_2'],
+    y=htdf[f'HT_atr_low_{atr_length}_{amplitude}_{channel_deviation}'],
     mode='lines',
     name='ATR Low',
     line=dict(color='red', width=1, dash='dot')

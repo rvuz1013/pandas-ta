@@ -12,8 +12,8 @@ from pandas_ta.utils import (
     v_series,
     v_talib
 )
-from pandas_ta.volatility import atr
-
+from pandas_ta.volatility.true_range import true_range
+from pandas_ta.ma import ma
 
 
 def natr(
@@ -49,7 +49,7 @@ def natr(
         pd.Series: New feature
     """
     # Validate
-    length = v_pos_default(length, 14)
+    length = v_pos_default(length, 20)
     _length = length + 1
     high = v_series(high, _length)
     low = v_series(low, _length)
@@ -70,12 +70,11 @@ def natr(
         from talib import NATR
         natr = NATR(high, low, close, length)
     else:
-        natr = (scalar / close) * \
-        atr(
-            high=high, low=low, close=close, length=length,
-            mamode=mamode, drift=drift, talib=mode_tal,
-            prenan=prenan, offset=offset, **kwargs
-        )
+        tr = true_range(high=high, low=low, close=close, drift=drift)
+
+        normalized_tr = (tr / close) * scalar
+
+        natr = ma(mamode, normalized_tr, length=length, talib=mode_tal, **kwargs)
 
     # Offset
     if offset != 0:
