@@ -16,7 +16,7 @@ def halftrend_loop(
     atr_length: int, amplitude: int, channel_deviation: int
 ):
     length = len(close)
-    trend = next_trend = 0
+    trend = 0
     alpha = 0.3  # Smoothing factor
 
     # Initialize up/down to a real price value to avoid long ramp-up
@@ -29,7 +29,7 @@ def halftrend_loop(
     min_high_price = high[atr_length]
 
     if close[atr_length] > low[atr_length]:
-        trend = next_trend = 1
+        trend = 1
 
     atr_cap = np.nanmax(atr_arr[:atr_length * 2]) * 0.5
 
@@ -51,15 +51,15 @@ def halftrend_loop(
         low_price = lowest_bars[i]
 
         # More tolerant trend switching
-        if next_trend == 1:
-            max_low_price = max(low_price, max_low_price)
-            if high_ma[i] < (max_low_price - dev) and close[i] < low[i - 1]:
-                trend = next_trend = 0
+        if trend == 0:
+            max_low_price = max(max_low_price, low_price)
+            if high_ma[i] < (max_low_price - dev) and close[i] < close[i - 1]:
+                trend = 1
                 min_high_price = high_price
-        else:
-            min_high_price = min(high_price, min_high_price)
-            if low_ma[i] > (min_high_price + dev) and close[i] > high[i - 1]:
-                trend = next_trend = 1
+        elif trend == 1:
+            min_high_price = min(min_high_price, high_price)
+            if low_ma[i] > (min_high_price + dev) and close[i] > close[i - 1]:
+                trend = 0
                 max_low_price = low_price
 
         arr_trend[i] = trend
