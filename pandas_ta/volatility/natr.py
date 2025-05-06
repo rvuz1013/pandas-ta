@@ -49,7 +49,7 @@ def natr(
         pd.Series: New feature
     """
     # Validate
-    length = v_pos_default(length, 20)
+    length = v_pos_default(length, 14)
     _length = length + 1
     high = v_series(high, _length)
     low = v_series(low, _length)
