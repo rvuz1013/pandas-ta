@@ -3,12 +3,8 @@ from pandas import Series
 import numpy as np
 from pandas_ta._typing import DictLike, Int
 from pandas_ta.ma import ma
-from pandas_ta.overlap import sma
 from pandas_ta.utils import (
-    non_zero_range,
-    v_drift,
     v_mamode,
-    v_offset,
     v_pos_default,
     v_series
 )
@@ -18,7 +14,7 @@ from pandas_ta.utils import (
 def trama(
         close: Series, length: Int = None,
         mamode: str = None,
-        offset: Int = None, **kwargs: DictLike
+        **kwargs: DictLike
 ) -> Series:
 
     # Validate
@@ -28,20 +24,17 @@ def trama(
     if close is None:
         return
 
+    mamode = v_mamode(mamode, "sma")
+
     highest = close.rolling(length).max()
     lowest = close.rolling(length).min()
 
     hh = np.maximum(np.sign(highest.diff()), 0)
     ll = np.maximum(np.sign(-lowest.diff()), 0)
 
-    print("//////////HERE//////////")
-    print(hh)
-    print("//////////HERE//////////")
-    print(ll)
-
     # trend_signal = np.where((hh | ll) > 0, 1, 0)
     trend_series = Series(np.where((hh.astype(bool) | ll.astype(bool)), 1, 0), index=close.index)
-    tc = sma(trend_series, length = length) ** 2
+    tc = ma(mamode, trend_series, length = length, **kwargs) ** 2
 
     ama = Series(index = close.index, dtype = float)
     ama.iloc[0] = close.iloc[0]
@@ -57,7 +50,5 @@ def trama(
 
     ama_series.name = f"TRAMA_{length}"
     ama_series.category = "trend"
-
-    print(ama_series)
 
     return ama_series
