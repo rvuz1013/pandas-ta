@@ -3,9 +3,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import pandas_ta as ta
 
-df = pd.read_csv("../data/SPY_D.csv")
+df = pd.read_csv("../data/aapl.csv")
 df.sort_values(by=['date'], inplace=True)
-
 df["date"] = pd.to_datetime(df["date"])
 
 # 2) Compute AVSL
